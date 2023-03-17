@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Slow-Moving GIFs</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
+		.container {
+			width: 1920px;
+			height: 1080px;
+			position: relative;
+			overflow: hidden;
+		}
+		.gif {
+			position: absolute;
+			top: 0;
+			left: 0;
+			transform: scaleX(-1);
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<img class="gif" src="RTrout001_Medium.gif" alt="Slow-Moving GIF">
+		<img class="gif" src="CTrout001_Medium.gif" alt="Slow-Moving GIF">
+		<img class="gif" src="TStklblk001_Medium.gif" alt="Slow-Moving GIF">
+		<img class="gif" src="PChub001_Medium.gif" alt="Slow-Moving GIF">
+		<img class="gif" src="Ayu001_medium.gif" alt="Slow-Moving GIF">
+		<img class="gif" src="Ayu001_medium.gif" alt="Slow-Moving GIF">
+		<img class="gif" src="Ayu001_medium.gif" alt="Slow-Moving GIF">
+	</div>
+	<script>
+		var container = document.querySelector(".container");
+		var gifs = Array.from(document.querySelectorAll(".gif"));
+
+		var gifData = gifs.map(function(gif) {
+			var gifWidth = gif.offsetWidth;
+
+			var targetX = 0;
+			var targetY = 0;
+			var direction = 1;
+
+			function moveGif() {
+				var x = parseInt(gif.style.left) || 0;
+				var y = parseInt(gif.style.top) || 0;
+
+				if (Math.abs(x - targetX) < 1 && Math.abs(y - targetY) < 1) {
+					targetX = Math.max(0, Math.min(container.offsetWidth - gifWidth, Math.random() * (container.offsetWidth - gifWidth)));
+					targetY = Math.max(0, Math.min(container.offsetHeight - gif.offsetHeight, Math.random() * (container.offsetHeight - gif.offsetHeight)));
+					direction = x < targetX ? 1 : -1;
+				}
+
+				x += direction;
+				y += (targetY - y) / Math.abs(targetX - x);
+
+				if (x <= 0 || x >= container.offsetWidth - gifWidth) {
+					direction *= -1;
+					x += direction * 2;
+				}
+
+				//x = (x - 248);
+				//y = (y - 96);
+
+				gif.style.transform = "scaleX(" + direction + ")";
+				gif.style.left = x + "px";
+				gif.style.top = y + "px";
+			}
+
+			return {
+				element: gif,
+				move: moveGif
+			};
+		});
+
+		function animateGifs() {
+			gifData.forEach(function(gif) {
+				gif.move();
+			});
+
+			requestAnimationFrame(animateGifs);
+		}
+
+		animateGifs();
+	</script>
+</body>
+</html>
